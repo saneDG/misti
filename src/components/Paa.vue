@@ -11,8 +11,17 @@
                     v-model="country"
                     class="location">
             </div>
-            <h1 class="head">
-                {{ client.forecast[0].weather_code.value }}
+            <div
+                v-if="Object.keys(iconNames).includes(client.forecast[0].weather_code.value)"
+                class="head">
+                <img
+                    class="asdasd"
+                    :src="getImgUrl(iconNames[client.forecast[0].weather_code.value])">
+            </div>
+            <h1
+                v-else
+                class="head">
+                {{ iconNames[client.forecast[0].weather_code.value] }}
             </h1>
         </div>
         <div class="textrow2">
@@ -83,6 +92,7 @@ import moment from 'moment';
 import Trend from 'vuetrend';
 
 import { locationOptions } from '../options.js';
+import weatherIcons from '@/valiables';
 
 export default {
     name: 'Paa',
@@ -92,6 +102,7 @@ export default {
     props: {},
     data () {
         return {
+            iconNames: weatherIcons,
             pageready: false,
             client: {
                 ip: 0,
@@ -158,6 +169,7 @@ export default {
                             console.log(response.data.locality);
                             this.country = response.data.city;
                             this.getWeather();
+                            console.log(weatherIcons)
                         })
                         .catch(error => {
                             console.log(error);
@@ -231,6 +243,10 @@ export default {
         },
         time () {
             this.datenow = moment().format('HH:mm');
+        },
+        getImgUrl (name) {
+            const images = require.context('../assets/', false, /\.png$/)
+            return images('./' + name + '.png')
         }
     }
 };
@@ -253,6 +269,7 @@ export default {
 .location {
   background-color: transparent;
   border: none;
+  margin-top: 75px;
   width: 100%;
   color: whitesmoke;
   font-family: "Lato", sans-serif;
@@ -274,6 +291,9 @@ export default {
   &::selection {
     background: #ffb7b73a;
   }
+}
+.asdasd{
+      filter: drop-shadow(4px 4px 6px rgba(255, 255, 255, 0.404));
 }
 .head {
   width: 40%;

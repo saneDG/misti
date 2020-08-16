@@ -38,7 +38,7 @@ export default {
         return {
             image: null,
             params: 'calm forest',
-            inputIsActive: true,
+            inputIsActive: false,
             imageInputPlaceholder: 'calm, forest'
         };
     },
@@ -48,7 +48,7 @@ export default {
             this.image = `https://source.unsplash.com/1600x900/?${this.params}`;
         } catch (error) {
             console.log(error);
-            this.image = './back1.png';
+            this.image = './assets/bak1.png';
         }
     },
     methods: {
