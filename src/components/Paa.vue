@@ -1,5 +1,7 @@
 <template>
-    <div class="paa">
+    <div
+        v-if="pageready"
+        class="paa">
         <div class="textrow">
             <h1 class="head">
                 {{ datenow }}
@@ -29,7 +31,11 @@
                 </div>
                 <div class="value">
                     <h2 class>
-                        {{ client.forecast[0].temp.value + " °" + client.forecast[0].temp.units }}
+                        {{
+                            client.forecast[0].temp.value +
+                                " °" +
+                                client.forecast[0].temp.units
+                        }}
                     </h2>
                 </div>
             </div>
@@ -47,31 +53,36 @@
                         smooth />
                 </div>
                 <div class="value">
-                    <h2
-                        class>
-                        {{ client.forecast[0].wind_speed.value + " " + client.forecast[0].wind_speed.units }}
+                    <h2 class>
+                        {{
+                            client.forecast[0].wind_speed.value +
+                                " " +
+                                client.forecast[0].wind_speed.units
+                        }}
                     </h2>
                 </div>
             </div>
         </div>
         <div class="joku">
-            <h4
-                class="quote">
-                "Tähän joku motivational quotepalikkoa joka hakee niitä quoteja vaikka jostain apista tms. Pelkkä array riittäs kans joita loopataan css animaatioilla sitte tässä siististi."
+            <h4 class="quote">
+                "Twenty years from now you will be more disappointed by the things that
+                you didn't do than by the ones you did do. So throw off the bowlines.
+                Sail away from the safe harbor. Catch the trade winds in your sails.
+                Explore. Dream. Discover"
             </h4>
             <h4 class="name">
-                - Santeri pigg
+                - H. Jackson Brown Jr.
             </h4>
         </div>
     </div>
 </template>
 
 <script>
-import axios from 'axios'
-import moment from 'moment'
-import Trend from 'vuetrend'
+import axios from 'axios';
+import moment from 'moment';
+import Trend from 'vuetrend';
 
-import { locationOptions } from '../options.js'
+import { locationOptions } from '../options.js';
 
 export default {
     name: 'Paa',
@@ -81,78 +92,87 @@ export default {
     props: {},
     data () {
         return {
+            pageready: false,
             client: {
-                ip: null,
+                ip: 0,
                 city: 'no location',
-                forecast: [],
+                forecast: ['lollero'],
                 location: {
-                    lat: null,
-                    lon: null,
+                    lat: 0,
+                    lon: 0,
                     temp: {
-                        value: null,
-                        units: null
+                        value: 0,
+                        units: ''
                     },
                     wind_speed: {
-                        value: null,
-                        units: null
+                        value: 0,
+                        units: ''
                     },
                     precipitation: {
-                        value: null,
-                        units: null
+                        value: 0,
+                        units: ''
                     },
                     wind_direction: {
-                        value: null,
-                        units: null
+                        value: 0,
+                        units: ''
                     },
                     observation_time: {
-                        value: null
+                        value: 0
                     },
                     weather_code: {
-                        value: 123
+                        value: 'n'
                     }
                 }
             },
-            country: null,
+            country: 'null',
             datenow: '',
             weather: ''
-        }
+        };
     },
     async mounted () {
-        this.getGeoLocation()
-        this.interval = setInterval(this.time, 1000)
+        this.getGeoLocation();
+        this.interval = setInterval(this.time, 1000);
     // axios
     //   .get(
     //   )
     //   .then(response => (this.weather = response));
     },
     beforeDestroy () {
-        clearInterval(this.interval)
+        clearInterval(this.interval);
     },
     methods: {
         getGeoLocation () {
-            navigator.geolocation.getCurrentPosition(GEO => {
-                // https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en
-                axios
-                    .get('https://api.bigdatacloud.net/data/reverse-geocode-client', {
-                        params: {
-                            latitude: GEO.coords.latitude,
-                            longitude: GEO.coords.longitude
-                        }
-                    })
-                    .then(response => {
-                        this.client.location.lat = GEO.coords.latitude
-                        this.client.location.lon = GEO.coords.latitude
-                        console.log(response.data.locality)
-                        this.country = response.data.city
-                        this.getWeather()
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            }, error => {
-                console.log('error:', error, 'You did not allow your location, trying to get location by IP')
-                this.getIPLocation()
-            }, locationOptions)
+            navigator.geolocation.getCurrentPosition(
+                GEO => {
+                    // https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=37.42159&longitude=-122.0837&localityLanguage=en
+                    axios
+                        .get('https://api.bigdatacloud.net/data/reverse-geocode-client', {
+                            params: {
+                                latitude: GEO.coords.latitude,
+                                longitude: GEO.coords.longitude
+                            }
+                        })
+                        .then(response => {
+                            this.client.location.lat = GEO.coords.latitude;
+                            this.client.location.lon = GEO.coords.latitude;
+                            console.log(response.data.locality);
+                            this.country = response.data.city;
+                            this.getWeather();
+                        })
+                        .catch(error => {
+                            console.log(error);
+                        });
+                },
+                error => {
+                    console.log(
+                        'error:',
+                        error,
+                        'You did not allow your location, trying to get location by IP'
+                    );
+                    this.getIPLocation();
+                },
+                locationOptions
+            );
         },
         getIPLocation () {
             axios
@@ -160,18 +180,18 @@ export default {
                     params: {}
                 })
                 .then(response => {
-                    this.country = response.data.country
-                    this.client.location.lat = response.data.lat
-                    this.client.location.lon = response.data.lon
-                    this.getWeather()
+                    this.country = response.data.country;
+                    this.client.location.lat = response.data.lat;
+                    this.client.location.lon = response.data.lon;
+                    this.getWeather();
                 })
                 .catch(error => {
-                    console.log(error)
-                    this.client.country = 'please disable adblock for site to work'
+                    console.log(error);
+                    this.client.country = 'please disable adblock for site to work';
                 })
                 .then(function () {
                     // always executed
-                })
+                });
         },
         getWeather () {
             axios
@@ -187,34 +207,33 @@ export default {
                     }
                 })
                 .then(response => {
-                    this.client.forecast = response.data
+                    this.client.forecast = response.data;
+                    this.pageready = true;
                 })
                 .catch(error => {
-                    console.log(error)
+                    console.log(error);
                 })
-                .then(function () {
-                    // always executed
-                })
+                .then(function () {});
         },
         shit (theShit) {
-            const theGoodShit = []
+            const theGoodShit = [];
             theShit.forEach(shit => {
-                theGoodShit.push(shit.temp.value)
-            })
-            return theGoodShit
+                theGoodShit.push(shit.temp.value);
+            });
+            return theGoodShit;
         },
         shit2 (theShit) {
-            const theGoodShit = []
+            const theGoodShit = [];
             theShit.forEach(shit => {
-                theGoodShit.push(shit.wind_speed.value)
-            })
-            return theGoodShit
+                theGoodShit.push(shit.wind_speed.value);
+            });
+            return theGoodShit;
         },
         time () {
-            this.datenow = moment().format('HH:mm')
+            this.datenow = moment().format('HH:mm');
         }
     }
-}
+};
 </script>
 <style lang="scss" scoped>
 .temps {
@@ -223,6 +242,9 @@ export default {
   align-items: center;
   .trend {
     width: 100%;
+    svg {
+      filter: drop-shadow(3px 3px 2px rgba(66, 66, 66, 0.829));
+    }
   }
   .value {
     text-align: center;
@@ -231,6 +253,7 @@ export default {
 .location {
   background-color: transparent;
   border: none;
+  width: 100%;
   color: whitesmoke;
   font-family: "Lato", sans-serif;
   font-weight: 100;
@@ -240,6 +263,10 @@ export default {
   font-size: 48px;
   text-transform: uppercase;
   transition: background-color 0.5s;
+  filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.829));
+  &:hover {
+    background-color: rgba(27, 27, 27, 0.171);
+  }
   &:focus {
     outline: none;
     background-color: rgba(27, 27, 27, 0.171);
@@ -268,14 +295,18 @@ export default {
 .joku {
   text-align: start;
   margin: 50px;
+  padding: 20px;
 }
 .name {
   font-size: 24px !important;
   text-transform: none;
 }
 .quote {
-  font-size: 24px !important;
+  font-size: 32px !important;
   text-transform: none;
   font-style: italic;
+}
+@media screen and (max-width: 992px) {
+
 }
 </style>
