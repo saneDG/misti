@@ -6,7 +6,6 @@
             <h1 class="head">
                 {{ datenow }}
             </h1>
-            kokelikakelikikelikakse
             <div>
                 <input
                     v-model="country"
